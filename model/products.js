@@ -1,0 +1,9 @@
+volumes:
+  dvwa:
+
+
+networks:
+  dvwa:
+
+
+
