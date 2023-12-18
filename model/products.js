@@ -1,0 +1,92 @@
+<?php
+
+define( 'DVWA_WEB_PAGE_TO_ROOT', '../' );
+require_once DVWA_WEB_PAGE_TO_ROOT . 'dvwa/includes/dvwaPage.inc.php';
+
+dvwaPageStartup( array( 'authenticated' ) );
+
+$page = dvwaPageNewGrab();
+$page[ 'title' ] = 'Source' . $page[ 'title_separator' ].$page[ 'title' ];
+
+if (array_key_exists ("id", $_GET)) {
+	$id = $_GET[ 'id' ];
+
+	$lowsrc = @file_get_contents("./{$id}/source/low.php");
+To remediate the security vulnerability of constructing the path from user-controlled data, you can use a whitelist approach. Create an associative array that maps valid vulnerability IDs to their corresponding titles. Then, use the user-controlled data as a key to the array and retrieve the corresponding title. Here's the patched code:
+
+```php
+$vulnerabilities = array(
+    'javascript' => 'JavaScript',
+    'fi' => 'File Inclusion',
+    'brute' => 'Brute Force',
+    'csrf' => 'CSRF',
+    'exec' => 'Command Injection',
+    'sqli' => 'SQL Injection',
+    'sqli_blind' => 'SQL Injection (Blind)',
+    'upload' => 'File Upload',
+    'xss_r' => 'Reflected XSS',
+    'xss_s' => 'Stored XSS',
+    'weak_id' => 'Weak Session IDs',
+    'authbypass' => 'Authorisation Bypass',
+    'open_redirect' => 'Open HTTP Redirect'
+);
+
+if (isset($vulnerabilities[$id])) {
+    $vuln = $vulnerabilities[$id];
+} else {
+    $vuln = 'Unknown Vulnerability';
+}
+
+$page['body'] .= "
+<div class=\"body_padded\">
+    <h1>{$vuln}</h1>
+";
+```
+
+In this approach, only the predefined vulnerability IDs specified in the whitelist array will be accepted, preventing any unauthorized or malicious paths from being constructed.
+		<br />
+
+		<h3>Impossible {$vuln} Source</h3>
+		<table width='100%' bgcolor='white' style=\"border:2px #C0C0C0 solid\">
+			<tr>
+				<td><div id=\"code\">{$impsrc}</div></td>
+			</tr>
+		</table>
+		<br />
+
+		<h3>High {$vuln} Source</h3>
+		<table width='100%' bgcolor='white' style=\"border:2px #C0C0C0 solid\">
+			<tr>
+				<td><div id=\"code\">{$highsrc}</div></td>
+			</tr>
+		</table>
+		<br />
+
+		<h3>Medium {$vuln} Source</h3>
+		<table width='100%' bgcolor='white' style=\"border:2px #C0C0C0 solid\">
+			<tr>
+				<td><div id=\"code\">{$medsrc}</div></td>
+			</tr>
+		</table>
+		<br />
+
+		<h3>Low {$vuln} Source</h3>
+		<table width='100%' bgcolor='white' style=\"border:2px #C0C0C0 solid\">
+			<tr>
+				<td><div id=\"code\">{$lowsrc}</div></td>
+			</tr>
+		</table>
+		<br /> <br />
+
+		<form>
+			<input type=\"button\" value=\"<-- Back\" onclick=\"history.go(-1);return true;\">
+		</form>
+
+	</div>\n";
+} else {
+	$page['body'] = "<p>Not found</p>";
+}
+
+dvwaSourceHtmlEcho( $page );
+
+?>
